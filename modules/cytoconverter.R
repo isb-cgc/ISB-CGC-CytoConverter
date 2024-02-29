@@ -17,6 +17,7 @@
 #' @param allow_Shorthand
 
 mod_rowparser <- modules::use('modules/rowparser.R')
+mod_utils <- modules::use('modules/utils.R')
 
 CytoConverter <- function(
         in_data,
@@ -34,48 +35,17 @@ CytoConverter <- function(
     # Load the cyto reference table, cyto_ref_table
 
     if (build == "GRCh38") {
-        cyto_ref_table <- sapply(
-            as.data.frame(utils::read.delim(
-                "Builds/cytoBand_GRCh38.txt", header = FALSE
-            )),
-            as.character
-        )
-      
+        cyto_ref_table <- mod_utils::load_ref("Builds/cytoBand_GRCh38.txt")
     } else if (build == "hg19") {
-        cyto_ref_table <- sapply(
-            as.data.frame(utils::read.delim(
-                "Builds/cytoBand_hg19.txt", header = FALSE
-            )),
-            as.character
-        )
-      
+        cyto_ref_table <- mod_utils::load_ref("Builds/cytoBand_hg19.txt")
     } else if (build == "hg18") {
-        cyto_ref_table <- sapply(
-            as.data.frame(utils::read.delim(
-                "Builds/cytoBand_hg18.txt", header = FALSE
-            )),
-            as.character
-        )
-      
+        cyto_ref_table <- mod_utils::load_ref("Builds/cytoBand_hg18.txt")
     } else if (build == "hg17") {
-        cyto_ref_table <- sapply(
-            as.data.frame(utils::read.delim(
-                "Builds/cytoBand_hg17.txt", header = FALSE
-            )),
-            as.character
-        )
-      
+        cyto_ref_table <- mod_utils::load_ref("Builds/cytoBand_hg17.txt")
     } else if (is.null(build)) {
-        cyto_ref_table <- sapply(
-            as.data.frame(utils::read.delim(
-                "Builds/cytoBand_GRCh38.txt", header = FALSE
-            )),
-            as.character
-        )
-      
+        cyto_ref_table <- mod_utils::load_ref("Builds/cytoBand_GRCh38.txt")
     } else {
         return("Error : build incorrectly specified")
-
     }
    
     # ref_table stores the end coordinate for each chromosome

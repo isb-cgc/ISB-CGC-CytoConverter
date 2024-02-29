@@ -52,4 +52,9 @@ detectAdd <- function(temp_table_processed, ex_table_processed) {
     return(additionList)
 }
 
+# load the specified reference file into a dataframe and convert columns to character
+load_ref <- function(file_name) {
+    sapply(as.data.frame(utils::read.delim(file_name, header=FALSE)),
+        as.character)
+}
 
