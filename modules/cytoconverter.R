@@ -32,8 +32,7 @@ CytoConverter <- function(
         allow_Shorthand = F
 ) {
     
-    # Load the cyto reference table, cyto_ref_table
-
+    # Load the cyto reference table
     if (build == "GRCh38") {
         cyto_ref_table <- mod_utils::load_ref("Builds/cytoBand_GRCh38.txt")
     } else if (build == "hg19") {
@@ -49,7 +48,6 @@ CytoConverter <- function(
     }
    
     # ref_table stores the end coordinate for each chromosome
-
     ref_table <- as.data.frame(
         cyto_ref_table[
             sapply(
@@ -69,9 +67,7 @@ CytoConverter <- function(
     colnames(Final_table) <- c("Sample ID", "Chr", "Start", "End", "Type")
     
     # Convert any single string into a table
-    if (is.vector(in_data)) {
-        in_data <- t(matrix(c("sample", in_data)))
-    }
+    if (is.vector(in_data)) { in_data <- t(matrix(c("sample", in_data))) }
     
     # Dump table of stuff containing unprocessed reads
     # Write this later, get all fish recorded
@@ -83,12 +79,10 @@ CytoConverter <- function(
         Dump_table <- rbind(Dump_table, c(fish_table, "Warning in fish reading"))
         # Now take out ish readings
         in_data[, 2] <- gsub("ish.*$", "", as.character(in_data[, 2]))
-      
     } else {
         Dump_table <- rbind(Dump_table, cbind(fish_table, "Warning in fish reading"))
         # Now take out ish readings
         in_data[, 2] <- gsub("ish.*$", "", as.character(in_data[, 2]))
-
     }
     
     # Set everything to lowercase, then set x and y to uppercase
@@ -109,7 +103,6 @@ CytoConverter <- function(
             && nchar(as.character(in_data[i, 2])) > 0
             && (allow_Shorthand == T || grepl("/", in_data[i, 2]))
         ) {
-
             # Split string
             data_split <- unlist(strsplit(in_data[i, 2], ","))
             data_split <- unlist(strsplit(
@@ -160,9 +153,7 @@ CytoConverter <- function(
                     data_split[mut_index] <- paste(
                         additional_to_add , data_split[index_match], sep = ""
                     )
-
                 }
-
             }
         
             in_data[i, 2] <- gsub(
@@ -170,7 +161,6 @@ CytoConverter <- function(
                 "/",
                 paste(data_split, collapse = ",")
             )
-        
         } # if
       
         if (
@@ -180,12 +170,10 @@ CytoConverter <- function(
             c2 <- strsplit(in_data[i, 2], split = "/")[[1]]
             c1 <- paste(in_data[i, 1], 1:length(c2), sep = "_")
             Con_data <- rbind(Con_data, cbind(c1, c2))
-
         } else {
             Con_data <- rbind(
                 Con_data, cbind(paste(in_data[i, 1], "_1"), in_data[i, 2])
             )
-
         }
       
         # Make idems here
@@ -195,16 +183,13 @@ CytoConverter <- function(
             temp_data <- Con_data[(idem_index[1] - 1):idem_index[length(idem_index)], ]
 
             if (!is.vector(temp_data) && nrow(temp_data) > 1) {
-
                 for (j in 2:nrow(temp_data)) {
                     # Make sure temp data has more than 1 row
                     if (grepl("idem|sl", temp_data[j, 2])) {
                         prev <- unlist(strsplit(temp_data[1, 2], "\\["))[1]
-
                     } else {
                         # Implement this so it can handel two sl1 in sucession and sdl1 sdl2
                         prev <- unlist(strsplit(temp_data[j - 1, 2], "\\["))[1]
-
                     }
                     prev <- unlist(strsplit(prev, ","))
                     prev <- prev[2:length(prev)]
@@ -236,19 +221,15 @@ CytoConverter <- function(
                                 cur[2],
                                 sep = ''
                             )
-
                         } else if (grepl("idem|sl|sdl", cur[2])) {
                             cur[2] <- paste(rep(sexchromprev, clonecount), collapse = '')
-
                         } else {
                             cur <- c(
                                 cur[1],
                                 paste(rep(sexchromprev, clonecount), collapse = ''),
                                 cur[2:length(cur)]
                             )
-                
                         }
-
                     }
 
                     if (!is.null(autochromprev)) {
@@ -258,12 +239,9 @@ CytoConverter <- function(
                                 rep(autochromprev, clonecount),
                                 cur[3:length(cur)]
                             )
-
                         } else {
                             cur <- c(cur[1:2], rep(autochromprev, clonecount))
-
                         }
-
                     }
 
                     cur <- cur[grep("idem|sl|sdl", cur, invert = T)]
@@ -274,18 +252,14 @@ CytoConverter <- function(
                 Con_data[
                     (idem_index[1] - 1):idem_index[length(idem_index)],
                 ] <- temp_data
-
             } else {
                 # Put it in the error table
                 Dump_table <- rbind(
                     Dump_table,
                     c(temp_data, "no proceeding cell line to refer to")
                 )
-
             }
-
         } # Make idems here
-    
     } # for (i in 1:nrow(in_data)) { # Split cell lines
 
     rownames(Con_data) <- 1:nrow(Con_data)
@@ -304,7 +278,6 @@ CytoConverter <- function(
                 "Warning in ?,~,marker, unknown additional material or incomplete karyotype detected"
             )
         )
-
     } else {
         rbind(
             Dump_table,
@@ -313,7 +286,6 @@ CytoConverter <- function(
                 "Warning in ?,~, marker, unknown additional material or incomplete karyotype detected"
             )
         )
-
     }
     
     # Main program qdx qd
@@ -345,7 +317,6 @@ CytoConverter <- function(
             cyto_sample <- unlist(
                 strsplit(as.character(cyto_sample), split = ",|\\[")
             )
-
         }
 
         # Take away extra accidental commas
@@ -401,9 +372,7 @@ CytoConverter <- function(
                     cyto_sample[mut_index] <- paste(
                         additional_to_add, cyto_sample[index_match], sep = ""
                     )
-
                 }
-
             }
 
             # Index of anything thats - in a clonal evolution step
@@ -439,9 +408,7 @@ CytoConverter <- function(
                     && length(index_cancel) > 0
                 ) {
                     cyto_sample <- cyto_sample[-1 * c(mut_gone_index, index_cancel)]
-
                 }
-
             }
 
         } # if (any(grepl("ids|idem|sl|sd", cyto_sample)) || allow_Shorthand) {
@@ -481,11 +448,9 @@ CytoConverter <- function(
             if (is.character(tottable) & length(tottable) == 1) {
                 Dump_table <- rbind(Dump_table, c(Con_data[i,], tottable))
                 transloctable <- data.frame()
-
             } else if (!is.list(tottable)) {
                 Dump_table <- tottable
                 transloctable <- data.frame()
-
             } else {
                 sorted_sample_table <- tottable[[1]]
                 Dump_table <- tottable[[2]]
@@ -524,33 +489,24 @@ CytoConverter <- function(
                         # Keep previous transloctable if sample names the same and cell line
                         # is in correct order
                         transloctable <- tottable[[3]]
-
                     } else {
                         transloctable <- data.frame()
-
                     }
-
                 }
-
             }
-
         } else {
             if (grepl("[[:digit:]]", cyto_sample[1])) {
                 Dump_table <- rbind(
                     Dump_table,
                     c(Con_data[i,], "Warning in karyotype number not specified")
                 )
-          
             } else {
                 Dump_table <- rbind(
                     Dump_table,
                     c(Con_data[i,], "Warning in karyotype is incorrect")
                 )
-
             }
-
         }
-
     } # for (i in 1:nrow(Con_data)) {
     
     # Remove duplicates and redundancy (same region loss/gain within group do this first,
@@ -619,18 +575,13 @@ CytoConverter <- function(
 
         if (any(is.na(nxt))) {
             col3[w] <- "unknown"
-
         } else {
             if (any(is_cp)) {
                 col3[w] <- paste("1-", nxt, " of ", sum(nxt), sep = '')
-
             } else {
                 col3[w] <- paste(nxt, "of", sum(nxt))
-
             }
-
         }
-
     }
 
     # Something is going wrong when its not just a normal cell and theres no more
@@ -641,21 +592,16 @@ CytoConverter <- function(
     # Compare to final table
     if (is.vector(Final_table)) {
         colvect <- vector(length = 1)
-      
     } else {
         colvect <- vector(length = length(Final_table[, 1]))
-
     }
     
     for (i in 1:length(IDs)) {
         if (is.vector(Final_table)) {
             colvect[grep(IDs[i], Final_table[1])] <- col3[i]
-        
         } else {
             colvect[grep(IDs[i], Final_table[, 1])] <- col3[i]
-
         }
-
     }
     
     Final_Final_table <- cbind(Final_table, colvect)
@@ -665,10 +611,8 @@ CytoConverter <- function(
 
     if (is.vector(Final_Final_table)) {
         Final_Final_table <- Final_Final_table[grep("Loss|Gain", Final_Final_table[5]),]
-      
     } else {
       Final_Final_table <- Final_Final_table[grep("Loss|Gain", Final_Final_table[, 5]),]
-
     }
 
     Final_Final_table <- stats::na.omit(Final_Final_table)
@@ -678,7 +622,6 @@ CytoConverter <- function(
         colnames(Final_Final_table) <- c(
             "Sample ID", "Chr", "Start", "End", "Type", "Percent Present"
         )
-
     }
 
     colnames(Dump_table) <- c("Sample ID", "Karyotype", "Error Message")
@@ -687,7 +630,6 @@ CytoConverter <- function(
     names(result) <- list("Result", "Error_log")
     
     return(result)
-
 }
 
 
