@@ -1484,28 +1484,8 @@ rowparse <- function(
                     
                     # print(c(new_val))
           
-                    # assign ploidy here 
-                    if (new_val >= 0 & new_val <= 34) {
-                        ploidy = 1
-                    }
-                    if (new_val >= 58 & new_val <= 80) {
-                        ploidy = 3
-                    }
-                    if (new_val >= 81 & new_val <= 103) {
-                        ploidy = 4
-                    }
-                    if (new_val >= 104 & new_val <= 126) {
-                        ploidy = 5
-                    }
-                    if (new_val >= 127 & new_val <= 149) {
-                        ploidy = 6
-                    }
-                    if (new_val >= 150 & new_val <= 172) {
-                        ploidy = 7
-                    }
-                    if (new_val >= 173 & new_val <= 195) {
-                        ploidy = 8
-                    }
+                    # assign ploidy
+                    if ( new_val <= 34 ) { ploidy = 1 } else { ploidy = round(new_val / 23) }
 
                     # loop to get values here
                     if (ploidy == 1) {
